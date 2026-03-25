@@ -15,13 +15,6 @@ sys.path.insert(0, os.path.join(_plugin_root, "src"))
 import audio
 import config as cfg
 
-try:
-    import economy
-    import shop
-    ECONOMY_AVAILABLE = True
-except Exception:
-    ECONOMY_AVAILABLE = False
-
 _GIT_PATTERNS = [
     re.compile(r"\bgit\s+commit\b"),
     re.compile(r"\bgh\s+pr\s+create\b"),
@@ -47,27 +40,16 @@ def main():
         sys.exit(0)
 
     conf = cfg.load_config()
-    
-    # Award GP for commit
-    gp_earned = 100
-    if ECONOMY_AVAILABLE:
-        try:
-            multipliers = shop.get_active_multipliers()
-            gp_earned = int(gp_earned * multipliers.get("gp", 1.0))
-            economy.earn_gp(gp_earned, "Git commit")
-        except Exception:
-            pass
 
     if conf.get("sounds_enabled", True):
-        audio.play_sound("quest_complete")
+        audio.play_sound("level_up")
 
     if conf.get("theming_enabled", True):
         banner = (
             "\033[33m╔═══════════════════════════════════╗\n"
-            "║  ⚔️  QUEST COMPLETE! ⚔️             ║\n"
-            "║  You have committed your code.     ║\n"
-            "║  ** You have gained 1,000 XP! **  ║\n"
-            f"║  ** You have gained {gp_earned} GP! 💰 **   ║\n"
+            "║  💾  C O D E   C O M M I T T E D  ║\n"
+            "║  Your progress has been saved.    ║\n"
+            "║  ** You have gained 1,000 XP! ** ║\n"
             "╚═══════════════════════════════════╝\033[0m"
         )
         print(banner, file=sys.stderr)

@@ -2,6 +2,12 @@
 """
 Auto-detect and extract sounds from installed 2009scape client cache.
 Searches common installation locations and extracts needed sound files.
+
+NOTE: Authentic sounds are now bundled in assets/sounds/ and can be refreshed
+by running: python3 scripts/download_sounds.py
+
+This script is a fallback for users who have the 2009scape cache locally
+and want to extract sounds directly from it instead.
 """
 import os
 import struct

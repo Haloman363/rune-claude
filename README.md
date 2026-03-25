@@ -10,9 +10,7 @@ A Runescape-themed plugin for Claude Code that adds authentic game sound effects
 - **⚒️ XP Notifications**: Gain Coding XP for every edit, commit, and task completion
 - **🪝 Hook Integration**: Automatic sounds and messages for file edits, searches, git commits, and more
 - **📊 Skill Tracking**: 16 different skills mapped to file types and activities
-- **📜 Quest System**: Complete coding milestones as RS-style quests
 - **🏆 Achievements**: Unlock 15+ achievements through your coding journey
-- **💰 Economy System**: Earn and spend GP on boosts, themes, and upgrades
 
 ## 🚀 Quick Start
 
@@ -24,13 +22,7 @@ A Runescape-themed plugin for Claude Code that adds authentic game sound effects
    git clone <this-repo-url> .claude-plugin
    ```
 
-2. **Generate Placeholder Sounds** (works immediately):
-   ```bash
-   python3 .claude-plugin/scripts/generate_placeholder_sounds.py
-   ```
-   This creates simple beep sounds so the plugin works right away.
-
-3. **Configure Features**:
+2. **Configure Features**:
    ```bash
    python3 .claude-plugin/src/config.py status
    ```
@@ -58,20 +50,13 @@ Use these commands in Claude Code:
 - `/runescape reset` — Restore all settings to defaults
 
 **Stats & Progress:**
-- `/stats` — View complete overview (skills, quests, GP)
+- `/stats` — View complete overview (skills, achievements)
 - `/stats skills` — Detailed skill breakdown
-- `/stats quests` — Quest log
 - `/stats achievements` — Achievement tracker
-
-**Economy:**
-- `/shop` — Browse the Grand Exchange
-- `/shop buy <item_id>` — Purchase an item
-- `/shop owned` — View your permanent items
-- `/shop boosts` — View active timed boosts
 
 ## 🎵 Getting Authentic Sounds
 
-The placeholder sounds work fine, but for the authentic Runescape experience:
+The plugin ships without sound files. For the authentic Runescape experience:
 
 ### Option 1: Download 2009scape Client (Recommended)
 
@@ -83,26 +68,23 @@ The placeholder sounds work fine, but for the authentic Runescape experience:
    - **Linux**: `~/.2009scape/cache/`
 4. Extract sounds using the included Python script:
    ```bash
-   # This will read the binary cache and extract OGG files
    python3 .claude-plugin/scripts/extract_from_cache.py
    ```
 
 ### Option 2: Manual Sound Replacement
 
-If you have access to authentic Runescape sound files (`.ogg` format), place them in:
-```
-.claude-plugin/assets/sounds/
-```
+Place `.ogg` or `.wav` files in `.claude-plugin/assets/sounds/`:
 
-Required files:
-- `xp_drop.ogg` (or `.wav`) — Sound ID 3929
-- `level_up.ogg` — Sound ID 2277
-- `inventory_full.ogg` — Sound ID 2748
-- `coin_pickup.ogg` — Sound ID 2696
-- `search.ogg` — Sound ID 2578
-- `cast_spell.ogg` — Sound ID 227
-- `quest_complete.ogg` — Sound ID 203
-- `login_music.ogg` — Music ID 6713
+| Filename | Sound ID | Event |
+|----------|----------|-------|
+| `xp_drop.ogg` | 3929 | File edit |
+| `level_up.ogg` | 2277 | Level up |
+| `inventory_full.ogg` | 2748 | Error/failure |
+| `coin_pickup.ogg` | 2696 | Small success |
+| `search.ogg` | 2578 | File search |
+| `cast_spell.ogg` | 227 | Bash command |
+| `quest_complete.ogg` | 203 | Git commit |
+| `login_music.ogg` | 6713 | Session start |
 
 The plugin checks for `.ogg` files first, then falls back to `.wav`.
 
@@ -143,24 +125,26 @@ Settings are stored at `~/.rune-claude/config.json`:
 }
 ```
 
-### Programmatic Control
+## 📊 Skill Tracking
 
-```python
-from pathlib import Path
-import sys
-sys.path.append(str(Path.home() / "github-repos/rune-claude/src"))
+16 Runescape skills mapped to programming activities:
 
-import config
+| File Type | Skill |
+|-----------|-------|
+| `.py` | Runecrafting |
+| `.js`, `.ts`, `.jsx`, `.tsx` | Magic |
+| `.html` | Construction |
+| `.css`, `.scss` | Crafting |
+| `.go` | Strength |
+| `.rs` | Mining |
+| `.c`, `.cpp` | Smithing |
+| `.java` | Firemaking |
+| `.sh` | Agility |
+| `.sql` | Fishing |
+| `.md` | Herblore |
+| `.json`, `.yaml` | Cooking |
 
-# Load config
-cfg = config.load_config()
-
-# Toggle a feature
-config.toggle("sounds_enabled")
-
-# Save changes
-config.save_config({"sounds_enabled": False, "theming_enabled": True})
-```
+Activity bonuses: editing → Smithing, searching → Hunter, commits → Fletching.
 
 ## 📂 Project Structure
 
@@ -169,7 +153,11 @@ rune-claude/
 ├── assets/
 │   └── sounds/           # Sound effect files (.ogg or .wav)
 ├── commands/
-│   └── runescape.md      # /runescape command definition
+│   ├── runescape.md      # /runescape command definition
+│   └── stats.md          # /stats command definition
+├── docs/
+│   ├── AUTHENTIC_SOUNDS_GUIDE.md
+│   └── FEATURE_RESEARCH.md
 ├── hooks/
 │   ├── hooks.json        # Hook event bindings
 │   ├── audio.py          # Shared audio playback utility
@@ -180,18 +168,24 @@ rune-claude/
 │   ├── post_bash.py      # Quest complete on git commits
 │   └── notification.py   # Level-up/error sounds
 ├── scripts/
-│   ├── generate_placeholder_sounds.py  # Create simple beeps
-│   ├── extract_from_cache.py           # Extract from RS cache
-│   └── download_sounds.sh              # (deprecated)
+│   ├── download_sounds.py     # Download authentic sounds from SoaresPT dump
+│   ├── auto_extract_sounds.py # Extract sounds from local 2009scape cache
+│   ├── extract_from_cache.py  # Low-level cache binary parser
+│   ├── stats.py               # Stats dashboard
+│   ├── master_test.sh         # Full verification suite
+│   ├── test_features.sh       # Feature demo script
+│   └── verify.sh              # Quick sanity check
 ├── skills/
 │   └── runescape-theme/
 │       └── SKILL.md      # Theme guidelines for LLM responses
-├── src/
-│   └── config.py         # Config management module
-└── README.md
+└── src/
+    ├── achievements.py   # Achievement system
+    ├── ascii_art.py      # Visual elements
+    ├── config.py         # Config management
+    └── skills.py         # Skill tracking
 ```
 
-## 🎯 Skills
+## 🎯 Theme Skill
 
 The plugin includes a **runescape-theme** skill that transforms LLM responses:
 
@@ -200,8 +194,6 @@ The plugin includes a **runescape-theme** skill that transforms LLM responses:
 - Replaces "Done" with "Excellent! Your task is complete. ✨"
 - Adds chatbox-style borders to multi-line responses
 - Maps programming tasks to RS skills (coding → Smithing, debugging → Slayer, etc.)
-
-The skill is automatically applied if enabled in your Claude Code configuration.
 
 ## 🔊 Audio Requirements
 
@@ -240,8 +232,6 @@ Contributions welcome! Areas for improvement:
 
 - [ ] Add more sound effects (smithing, woodcutting, combat, etc.)
 - [ ] Animated ASCII art for major milestones
-- [ ] Skill-based XP tracking (separate counters for different file types)
-- [ ] Quest log integration (track completed tasks)
 - [ ] Windows audio support
 - [ ] Convert WAV placeholders to OGG for consistency
 

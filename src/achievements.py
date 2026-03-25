@@ -223,29 +223,6 @@ DEFAULT_ACHIEVEMENTS = [
         icon="🎯",
     ),
     
-    # Questing
-    Achievement(
-        id="quest_points_10",
-        name="Questaholic",
-        description="Earn 10 quest points",
-        category="Questing",
-        icon="📜",
-    ),
-    Achievement(
-        id="quest_points_50",
-        name="Quest Master",
-        description="Earn 50 quest points",
-        category="Questing",
-        icon="🏆",
-    ),
-    Achievement(
-        id="all_quests",
-        name="Quest Cape",
-        description="Complete all available quests",
-        category="Questing",
-        icon="🎖️",
-    ),
-    
     # Productivity
     Achievement(
         id="commits_10",

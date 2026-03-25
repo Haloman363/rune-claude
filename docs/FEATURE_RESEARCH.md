@@ -26,23 +26,12 @@
 - Total level calculation
 - High scores export
 
-### 4. Quest System
-- Define quests for project milestones
-- Quest log tracking
-- Requirements and rewards
-- Quest points system
-
-### 5. Achievement System
+### 4. Achievement System
 - Unlockable achievements
 - Achievement diary
 - Rare drops (Easter eggs in code comments)
 
-### 6. Economy Features
-- GP tracking for commits
-- Shop for plugin enhancements
-- Random event interruptions
-
-### 7. Integration Improvements
+### 5. Integration Improvements
 - GitHub webhook integration
 - Discord notifications with RS formatting
 - Slack/Teams themed messages

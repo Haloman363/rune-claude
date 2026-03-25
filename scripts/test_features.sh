@@ -12,12 +12,12 @@ echo -e "\033[33m╚════════════════════
 echo ""
 
 # Test 1: Configuration System
-echo -e "\033[36m[1/8] Testing Configuration System...\033[0m"
+echo -e "\033[36m[1/7] Testing Configuration System...\033[0m"
 python3 src/config.py status
 echo ""
 
 # Test 2: Skill Tracking
-echo -e "\033[36m[2/8] Testing Skill Tracking...\033[0m"
+echo -e "\033[36m[2/7] Testing Skill Tracking...\033[0m"
 echo "  Adding 500 Smithing XP..."
 python3 src/skills.py add "Smithing" 500 | head -1
 echo "  Adding 1200 Magic XP..."
@@ -26,19 +26,13 @@ echo "  Current Smithing stats:"
 python3 src/skills.py stats "Smithing"
 echo ""
 
-# Test 3: Quest System
-echo -e "\033[36m[3/8] Testing Quest System...\033[0m"
-echo "  Available quests:"
-python3 src/quests.py list
-echo ""
-
-# Test 4: Achievement System
-echo -e "\033[36m[4/8] Testing Achievement System...\033[0m"
+# Test 3: Achievement System
+echo -e "\033[36m[3/7] Testing Achievement System...\033[0m"
 python3 src/achievements.py stats
 echo ""
 
-# Test 5: ASCII Art
-echo -e "\033[36m[5/8] Testing ASCII Art & Visual Elements...\033[0m"
+# Test 4: ASCII Art
+echo -e "\033[36m[4/7] Testing ASCII Art & Visual Elements...\033[0m"
 python3 -c "
 import sys
 sys.path.insert(0, 'src')
@@ -56,18 +50,18 @@ for skill in ['Smithing', 'Magic', 'Slayer']:
 "
 echo ""
 
-# Test 6: Stats Dashboard
-echo -e "\033[36m[6/8] Testing Stats Dashboard...\033[0m"
+# Test 5: Stats Dashboard
+echo -e "\033[36m[5/7] Testing Stats Dashboard...\033[0m"
 python3 scripts/stats.py
 echo ""
 
-# Test 7: Detailed Skills View
-echo -e "\033[36m[7/8] Testing Detailed Skills View...\033[0m"
+# Test 6: Detailed Skills View
+echo -e "\033[36m[6/7] Testing Detailed Skills View...\033[0m"
 python3 scripts/stats.py skills | head -25
 echo ""
 
-# Test 8: Sound Files
-echo -e "\033[36m[8/8] Checking Sound Files...\033[0m"
+# Test 7: Sound Files
+echo -e "\033[36m[7/7] Checking Sound Files...\033[0m"
 SOUND_COUNT=$(find assets/sounds -type f \( -name "*.wav" -o -name "*.ogg" \) 2>/dev/null | wc -l)
 echo "  ✓ $SOUND_COUNT sound files found"
 echo "  Files:"
@@ -86,6 +80,5 @@ echo -e "\033[33m** You have gained 800 Testing XP! ⚔️ **\033[0m"
 echo ""
 echo -e "\033[36mTry these commands:\033[0m"
 echo -e "  python3 scripts/stats.py         # Full overview"
-echo -e "  python3 src/quests.py list       # View quests"
 echo -e "  python3 src/achievements.py list # View achievements"
 echo -e "  python3 src/config.py status     # Plugin settings"

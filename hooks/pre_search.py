@@ -27,7 +27,7 @@ def main():
         audio.play_sound("search")
 
     if conf.get("theming_enabled", True):
-        print("\033[36m[Scout]: Searching the Grand Exchange... 🔍\033[0m", file=sys.stderr)
+        print("\033[36m[Scout]: Searching the codebase... 🔍\033[0m", file=sys.stderr)
 
     sys.exit(0)
 
