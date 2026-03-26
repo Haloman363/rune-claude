@@ -1,7 +1,7 @@
 """
-Minimap widget — circular ASCII minimap with 4 status orbs using real OSRS sprites.
+Minimap widget — 4 OSRS status orbs rendered from real PNG sprites.
+The minimap area itself is a dark placeholder until map tile sprites are available.
 """
-from pathlib import Path
 from textual.app import ComposeResult
 from textual.widget import Widget
 from textual.widgets import Static
@@ -14,69 +14,33 @@ except Exception:
     _SPRITES_OK = False
 
 
-# 13-col × 11-row ASCII circle — each char is one terminal column
-_MINIMAP_ROWS = [
-    "   #######   ",
-    " ##.......## ",
-    " #.........# ",
-    "##...........##",
-    "#.............#",
-    "#.....@.......#",
-    "#.............#",
-    "##...........##",
-    " #.........# ",
-    " ##.......## ",
-    "   #######   ",
-]
-
 _ORB_DEFS = [
-    ("hp",     "❤",  "#cc0000", "99"),
-    ("prayer", "✞",  "#1e90ff", "99"),
-    ("run",    "⚡",  "#e0c040", "100"),
-    ("spec",   "⚔",  "#40c040", "100"),
+    ("hp",     "99"),
+    ("prayer", "99"),
+    ("run",    "100"),
+    ("spec",   "100"),
 ]
-
-
-def _build_minimap_text() -> Text:
-    t = Text()
-    for row in _MINIMAP_ROWS:
-        for ch in row:
-            if ch == "#":
-                t.append(ch, style="#605443")
-            elif ch == "@":
-                t.append(ch, style="bold bright_white")
-            elif ch == ".":
-                t.append(ch, style="#3a5c1a")
-            else:
-                t.append(ch)
-        t.append("\n")
-    return t
 
 
 class _OrbWidget(Static):
-    """Single status orb — sprite if available, colored text fallback."""
+    """Single status orb rendered from its PNG sprite."""
 
-    def __init__(self, orb_name: str, icon: str, color: str, value: str, **kwargs):
+    def __init__(self, orb_name: str, value: str, **kwargs):
         super().__init__(**kwargs)
         self._orb_name = orb_name
-        self._icon = icon
-        self._color = color
         self._value = value
 
     def on_mount(self) -> None:
         if _SPRITES_OK:
             sprite = get_orb_sprite(self._orb_name, size=8)
-            # Append value below sprite
-            sprite.append(f" {self._value}", style=f"bold {self._color}")
+            sprite.append(f" {self._value}", style="bold #c0a886")
             self.update(sprite)
         else:
-            t = Text()
-            t.append(f"{self._icon} {self._value}", style=f"bold {self._color}")
-            self.update(t)
+            self.update(self._value)
 
 
 class Minimap(Widget):
-    """Circular ASCII minimap + 4 OSRS status orbs."""
+    """Minimap panel: dark placeholder area + 4 PNG status orbs."""
 
     DEFAULT_CSS = """
     Minimap {
@@ -85,11 +49,16 @@ class Minimap(Widget):
         border-bottom: solid #605443;
         height: 14;
     }
-    #map-art {
+    #map-area {
         width: 1fr;
-        content-align: center middle;
         background: #18140c;
-        color: #3a5c1a;
+        align: center middle;
+    }
+    #map-label {
+        color: #605443;
+        content-align: center middle;
+        width: 100%;
+        height: 100%;
     }
     #orb-column {
         width: 9;
@@ -103,18 +72,18 @@ class Minimap(Widget):
         width: 9;
         content-align: center middle;
         border: solid #605443;
-        margin: 0 0 0 0;
         background: #18140c;
         padding: 0;
     }
     """
 
     def compose(self) -> ComposeResult:
-        yield Static(_build_minimap_text(), id="map-art")
+        with Static(id="map-area"):
+            yield Static("[ Map ]", id="map-label")
         with Static(id="orb-column"):
-            for orb_name, icon, color, value in _ORB_DEFS:
+            for orb_name, value in _ORB_DEFS:
                 yield _OrbWidget(
-                    orb_name, icon, color, value,
+                    orb_name, value,
                     classes="orb-widget",
                     id=f"orb-{orb_name}",
                 )
