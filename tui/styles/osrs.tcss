@@ -1,0 +1,42 @@
+/* OSRS color palette and layout */
+
+Screen {
+    layout: grid;
+    grid-size: 2 1;
+    grid-columns: 4fr 1fr;
+    background: #18140c;
+}
+
+#left-column {
+    layout: grid;
+    grid-size: 1 2;
+    grid-rows: 2fr 1fr;
+}
+
+#game-viewport {
+    border: solid #605443;
+    background: #18140c;
+    padding: 0 1;
+}
+
+#chatbox {
+    border: solid #605443;
+    background: #2a2316;
+}
+
+#right-column {
+    layout: grid;
+    grid-size: 1 2;
+    grid-rows: 14 1fr;
+    border: solid #605443;
+    background: #2a2316;
+}
+
+#minimap {
+    background: #18140c;
+    border-bottom: solid #605443;
+}
+
+#control-panel {
+    background: #2a2316;
+}
