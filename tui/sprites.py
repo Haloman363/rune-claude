@@ -8,6 +8,12 @@ import zlib
 from pathlib import Path
 from rich.text import Text
 
+try:
+    from tui.config import load_config as _load_config
+    _CONFIG_OK = True
+except Exception:
+    _CONFIG_OK = False
+
 # Root of assets directory — resolved relative to this file
 _ASSETS = Path(__file__).parent.parent / "assets" / "icons"
 
@@ -127,9 +133,17 @@ def _scale_nearest(pixels: list, src_w: int, src_h: int, dst_w: int, dst_h: int)
 def render_sprite(path: Path, target_w: int = 8, target_h: int = 8) -> Text:
     """
     Render a PNG sprite as Rich Text using ANSI half-block art (▄).
+    Returns a single '?' character if custom_emojis is disabled in config.
     target_h must be even; each 2 pixel rows → 1 character row.
     Returns a Rich Text object ready to embed in a Static widget.
     """
+    # Respect custom_emojis config flag
+    if _CONFIG_OK:
+        try:
+            if not _load_config().get("custom_emojis", True):
+                return Text("?")
+        except Exception:
+            pass
     try:
         w, h, pix = _read_png_rgba(path)
     except Exception:

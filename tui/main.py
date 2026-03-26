@@ -19,6 +19,13 @@ from tui.widgets.minimap import Minimap
 from tui.widgets.panel import ControlPanel
 from tui.widgets.chatbox import Chatbox
 
+try:
+    from tui.audio import play_sound as _play_sfx
+    from tui.config import load_config as _load_config
+    _AUDIO_OK = True
+except Exception:
+    _AUDIO_OK = False
+
 MIN_WIDTH  = 120
 MIN_HEIGHT = 40
 
@@ -45,6 +52,13 @@ class RuneClaudeTUI(App):
 
     def on_mount(self) -> None:
         self._check_size()
+        if _AUDIO_OK:
+            try:
+                config = _load_config()
+                if config.get("sounds_enabled", True):
+                    _play_sfx("login_music")
+            except Exception:
+                pass
 
     def on_resize(self, event: Resize) -> None:
         self._check_size()
