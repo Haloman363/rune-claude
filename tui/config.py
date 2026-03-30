@@ -10,6 +10,7 @@ from tui.platform_utils import get_config_dir
 CONFIG_PATH = get_config_dir() / "config.json"
 
 _DEFAULTS: dict = {
+    "username": "Adventurer",
     "sounds_enabled": True,
     "custom_emojis": True,
     "music_enabled": True,
@@ -17,6 +18,8 @@ _DEFAULTS: dict = {
     "music_source": "osrs",     # "osrs" | "custom"
     "custom_music_dir": "",     # filesystem path, empty = not configured
     "autoplay_on_launch": True, # play Scape Main when TUI opens
+    "chat_font_size": 20,       # px, applied to chat area
+    "control_font_size": 20,    # px, applied to control panel
 }
 
 

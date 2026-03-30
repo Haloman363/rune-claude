@@ -1,0 +1,25 @@
+/* ── Game Viewport ───────────────────────────── */
+.hidden { display: none !important; }
+
+#game-viewport {
+  display: block;
+  width: var(--viewport-w);
+  height: var(--viewport-h);
+  background: var(--bg-dark);
+  flex-shrink: 0;
+}
+
+#viewport-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--viewport-w);
+  height: var(--viewport-h);
+  background: var(--bg-dark);
+  outline: 2px solid var(--border);
+  outline-offset: -2px;
+  color: var(--text-tan);
+  font-size: 18px;
+  flex-shrink: 0;
+  overflow: hidden;
+}

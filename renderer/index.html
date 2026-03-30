@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' http:; connect-src http: ws:; img-src http: data:; font-src http: 'self'; media-src http:">
+  <link rel="stylesheet" href="/style/font.css">
+  <link rel="stylesheet" href="/style/osrs.css">
+  <link rel="stylesheet" href="/style/sections/viewport.css">
+  <link rel="stylesheet" href="/style/sections/chatbox.css">
+  <link rel="stylesheet" href="/style/sections/minimap.css">
+  <link rel="stylesheet" href="/style/sections/panel.css">
+  <title>rune-claude</title>
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── Section 1: Game Viewport ── -->
+    <div id="left-column">
+      <div id="viewport-placeholder">[ Game Window ]</div>
+      <canvas id="game-viewport" class="hidden"></canvas>
+
+      <!-- ── Section 2: Chatbox ── -->
+      <div id="chatbox">
+
+        <button id="chat-maximize-btn" title="Maximize chat">&#x26F6;</button>
+
+        <!-- Chat panel (OSRS view) -->
+        <div id="chat-panel">
+          <div id="chat-messages">
+            <div id="chat-input-row">
+              <span id="chat-label">Adventurer:</span>
+              <span id="chat-display"></span><span id="chat-cursor" class="hidden">*</span>
+              <input id="chat-input" type="text" autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+        </div>
+
+        <!-- Console panel (raw terminal view) -->
+        <div id="console-panel" class="hidden">
+          <div id="console-output"></div>
+          <div id="console-input-row">
+            <span id="console-prompt">$</span>
+            <input id="console-input" type="text" autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+
+        <div id="chatbox-bottom-bar">
+          <div id="chat-tabs-row">
+            <div id="chat-tabs"></div>
+            <button id="chat-report-btn">Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right sidebar -->
+    <div id="right-column">
+
+      <!-- ── Section 3: Minimap + Compass ── -->
+      <div id="minimap">
+        <div id="map-area">
+          <div id="map-placeholder">[ Map ]</div>
+        </div>
+        <div id="map-frame-overlay">
+          <img id="frame-composite" src="/assets/icons/ui/frame/minimap_composite.png" alt="">
+        </div>
+        <div id="orb-column">
+          <div class="orb" data-orb="hp">
+            <img src="" data-orb="hp" alt="hp">
+            <span class="orb-val">99</span>
+          </div>
+          <div class="orb" data-orb="prayer">
+            <img src="" data-orb="prayer" alt="prayer">
+            <span class="orb-val">99</span>
+          </div>
+          <div class="orb" data-orb="run">
+            <img src="" data-orb="run" alt="run">
+            <span class="orb-val">100</span>
+          </div>
+          <div class="orb" data-orb="spec">
+            <img src="" data-orb="spec" alt="spec">
+            <span class="orb-val">100</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Section 4: Inventory + Control Panel ── -->
+      <div id="control-panel">
+        <div id="tab-row-1" class="tab-row"></div>
+        <div id="panel-body"></div>
+        <div id="tab-row-2" class="tab-row"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/viewport.js"></script>
+  <script src="/js/minimap.js"></script>
+  <script src="/js/chatbox.js"></script>
+  <script src="/js/panel.js"></script>
+  <script src="/js/music.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

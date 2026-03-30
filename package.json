@@ -1,0 +1,14 @@
+{
+  "name": "rune-claude",
+  "version": "0.2.0",
+  "description": "OSRS-themed desktop app",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^41.0.0",
+    "stylelint": "^17.6.0",
+    "stylelint-config-standard": "^40.0.0"
+  }
+}

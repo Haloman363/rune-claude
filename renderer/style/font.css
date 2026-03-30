@@ -1,0 +1,7 @@
+@font-face {
+  font-family: 'RuneScape';
+  src: url('/fonts/runescape_uf.woff2') format('woff2'),
+       url('/fonts/runescape_uf.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
