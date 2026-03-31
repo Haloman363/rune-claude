@@ -15,6 +15,8 @@ _DEFAULTS = {
     "sounds_enabled": True,
     "theming_enabled": True,
     "game_phrases_enabled": True,
+    "custom_emojis": True,
+    "sixel_rendering": False,
 }
 
 
@@ -59,12 +61,16 @@ def _print_status(config: dict) -> None:
     sounds = "[ON] 🔊" if config.get("sounds_enabled") else "[OFF] 🔇"
     theming = "[ON] 🎨" if config.get("theming_enabled") else "[OFF]"
     phrases = "[ON] 📜" if config.get("game_phrases_enabled") else "[OFF]"
+    emojis = "[ON] ⚔️" if config.get("custom_emojis") else "[OFF]"
+    sixel = "[ON] 🖼️" if config.get("sixel_rendering") else "[OFF]"
     print("\033[33m╔════════════════════════════════╗\033[0m")
     print("\033[33m║ 🎮 rune-claude Config           ║\033[0m")
     print("\033[33m╠════════════════════════════════╣\033[0m")
     print(f"\033[33m║ Sounds:    {sounds:<20}║\033[0m")
     print(f"\033[33m║ Theming:   {theming:<20}║\033[0m")
     print(f"\033[33m║ Phrases:   {phrases:<20}║\033[0m")
+    print(f"\033[33m║ Emojis:    {emojis:<20}║\033[0m")
+    print(f"\033[33m║ Sixel:     {sixel:<20}║\033[0m")
     print("\033[33m╚════════════════════════════════╝\033[0m")
 
 

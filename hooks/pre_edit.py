@@ -15,6 +15,14 @@ import audio
 import config as cfg
 
 try:
+    from emojis import emoji as _emoji
+    def _e(shortcode, fallback=""):  # noqa: E301
+        return _emoji(shortcode)
+except Exception:
+    def _e(shortcode, fallback=""):  # noqa: E301
+        return fallback
+
+try:
     import skills
     SKILLS_AVAILABLE = True
 except Exception:
@@ -57,7 +65,8 @@ def main():
         audio.play_sound("xp_drop")
 
     if conf.get("theming_enabled", True):
-        print(f"\033[33m** You have gained {xp_amount} {skill} XP! ⚒️ **\033[0m", file=sys.stderr)
+        skill_emoji = _e(f":{skill.lower()}:", _e(":smithing:", "⚒️"))
+        print(f"\033[33m** You have gained {xp_amount} {skill} XP! {skill_emoji} **\033[0m", file=sys.stderr)
 
     sys.exit(0)
 

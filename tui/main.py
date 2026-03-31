@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from textual.app import App, ComposeResult
-from textual.widgets import Static
+from textual.containers import Container
 from textual.events import Resize
 
 from tui.widgets.viewport import GameViewport
@@ -43,10 +43,10 @@ class RuneClaudeTUI(App):
     ]
 
     def compose(self) -> ComposeResult:
-        with Static(id="left-column"):
+        with Container(id="left-column"):
             yield GameViewport(id="game-viewport")
             yield Chatbox(id="chatbox")
-        with Static(id="right-column"):
+        with Container(id="right-column"):
             yield Minimap(id="minimap")
             yield ControlPanel(id="control-panel")
 

@@ -14,15 +14,30 @@ sys.path.insert(0, os.path.join(_plugin_root, "src"))
 import audio
 import config as cfg
 
-_BANNER = """\033[33m
-╔══════════════════════════════════════════════════════╗
-║          Welcome to RuneScape Claude  ⚔️             ║
-║   May your code be bug-free, adventurer. 🛡️          ║
-╠══════════════════════════════════════════════════════╣
-║  Type /runescape to configure your adventure.        ║
-╚══════════════════════════════════════════════════════╝
-** Tip: Gain Coding XP by editing files! ⚒️ **
-\033[0m"""
+try:
+    from emojis import emoji as _emoji
+    def _e(shortcode, fallback=""):  # noqa: E301
+        return _emoji(shortcode)
+except Exception:
+    def _e(shortcode, fallback=""):  # noqa: E301
+        return fallback
+
+
+def _build_banner() -> str:
+    sword = _e(":attack:", "⚔️")
+    shield = _e(":defence:", "🛡️")
+    pick = _e(":smithing:", "⚒️")
+    return (
+        f"\033[33m\n"
+        f"╔══════════════════════════════════════════════════════╗\n"
+        f"║          Welcome to RuneScape Claude  {sword}             ║\n"
+        f"║   May your code be bug-free, adventurer. {shield}          ║\n"
+        f"╠══════════════════════════════════════════════════════╣\n"
+        f"║  Type /runescape to configure your adventure.        ║\n"
+        f"╚══════════════════════════════════════════════════════╝\n"
+        f"** Tip: Gain Coding XP by editing files! {pick} **\n"
+        f"\033[0m"
+    )
 
 
 def main():
@@ -37,7 +52,7 @@ def main():
         audio.play_sound("login_music")
 
     if conf.get("theming_enabled", True):
-        print(_BANNER, file=sys.stderr)
+        print(_build_banner(), file=sys.stderr)
 
     sys.exit(0)
 

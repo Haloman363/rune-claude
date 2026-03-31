@@ -3,35 +3,50 @@ ASCII art assets for rune-claude theming.
 Includes skill icons, banners, and decorative elements.
 """
 
+try:
+    from emojis import get_skill_emoji, emoji as _e
+    _EMOJI_AVAILABLE = True
+except Exception:
+    _EMOJI_AVAILABLE = False
+    def _e(s):  # noqa: E301
+        return s
+
+
+def _skill_icon_line(skill_name: str, fallback: str) -> str:
+    if _EMOJI_AVAILABLE:
+        return f" {get_skill_emoji(skill_name)} "
+    return fallback
+
+
 # Skill Icons (compact, 3 lines)
 SKILL_ICONS = {
     "Smithing": [
-        " ⚒️ ",
+        _skill_icon_line("Smithing", " ⚒️ "),
         "▄█▄",
         "███",
     ],
     "Magic": [
-        " ✨ ",
+        _skill_icon_line("Magic", " ✨ "),
         "╱│╲",
         " │ ",
     ],
     "Runecrafting": [
-        " 📜 ",
+        _skill_icon_line("Runecrafting", " 📜 "),
         "◢█◣",
         "███",
     ],
     "Construction": [
-        " 🏗️ ",
+        _skill_icon_line("Construction", " 🏗️ "),
         "┌─┐",
         "└─┘",
     ],
     "Mining": [
-        " ⛏️ ",
+        _skill_icon_line("Mining", " ⛏️ "),
         "▓▓▓",
         "███",
     ],
     "Slayer": [
-        " ⚔️ ",
+        _skill_icon_line("Slayer", " ⚔️ "),
         "┃│┃",
         " ╲╱",
     ],
@@ -69,9 +84,9 @@ LEVEL_UP_BANNER = """
 
 # XP Drop Effects (different sizes)
 XP_DROPS = {
-    "small": "  +{xp} xp  ",
-    "medium": " ✨ +{xp} xp ✨ ",
-    "large": "🌟 +{xp} xp 🌟",
+    "small":  "  +{xp} xp  ",
+    "medium": f" {_e(':magic:')} +{{xp}} xp {_e(':magic:')} ",
+    "large":  f"{_e(':smithing:')} +{{xp}} xp {_e(':smithing:')}",
 }
 
 # Progress Bar

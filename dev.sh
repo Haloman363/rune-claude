@@ -5,7 +5,18 @@
 #   ./dev.sh --server   # server-only mode (no Electron)
 #   ./dev.sh restart    # kill any running instance then start
 
-DIR="$(dirname "$0")"
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# --- venv setup ---
+VENV="$DIR/.venv"
+if [[ ! -d "$VENV" ]]; then
+  echo "Creating Python virtual environment..."
+  python3 -m venv "$VENV"
+fi
+
+# Install/update dependencies
+"$VENV/bin/pip" install -q -r "$DIR/requirements.txt"
+# ---
 
 if [[ "$1" == "restart" ]]; then
   echo "Killing existing processes..."
@@ -15,4 +26,4 @@ if [[ "$1" == "restart" ]]; then
   shift
 fi
 
-exec python3 "$DIR/dev.py" "$@"
+exec "$VENV/bin/python" "$DIR/dev.py" "$@"
