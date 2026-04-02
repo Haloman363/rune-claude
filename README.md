@@ -57,20 +57,20 @@ python3 src/config.py theming off   # disable ANSI theming
 
 Settings stored at `~/.rune-claude/config.json`.
 
-## Getting Authentic Sounds
+## Sounds
 
-The repo ships without sound files. To get authentic OSRS sounds:
+Authentic OSRS sound files are included in `assets/sounds/`. If you want to replace them or add more:
 
-**Option 1 — SoaresPT dump** (easiest):
+**Download from SoaresPT dump**:
 ```bash
 python3 scripts/download_sounds.py
 ```
 
-**Option 2 — 2009scape cache**:
+**Extract from 2009scape cache**:
 1. Run the [2009scape launcher](https://2009scape.org) once to download the cache
 2. `python3 scripts/extract_from_cache.py`
 
-**Option 3 — Manual**: place `.ogg` files in `assets/sounds/`:
+**Manual**: place `.ogg` or `.wav` files in `assets/sounds/`:
 
 | Filename | Event |
 |----------|-------|
