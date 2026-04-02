@@ -38,9 +38,8 @@ credentials/
 api_keys.*
 config.secret.*
 
-# Claude Code local settings (may contain permissions/tokens)
+# Claude Code local settings (session permissions — not for sharing)
 .claude/settings.local.json
-.claude/
 
 # Claude plugin local state
 .claude-plugin/

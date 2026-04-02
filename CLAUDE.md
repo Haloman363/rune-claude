@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # rune-claude
 
 OSRS-themed Electron desktop app. Flask backend (port 7432) serves HTML/CSS/JS frontend rendered in Electron.
@@ -23,10 +27,18 @@ dev.py → starts Flask (port 7432) + Electron window
 ## How to Run
 
 ```bash
-python3 dev.py          # starts Flask + Electron
+./dev.sh                # preferred — creates .venv, installs deps, starts Flask + Electron
+./dev.sh --server       # Flask only (no Electron), binds 0.0.0.0 for remote access
+./dev.sh restart        # kill existing instance then start fresh
 ```
 
-First run downloads the RuneScape font (~200KB) to `renderer/fonts/`.
+`dev.sh` auto-creates `.venv/` and runs `pip install -r requirements.txt` on first run. For dev dependencies (pytest):
+
+```bash
+.venv/bin/pip install -r requirements-dev.txt
+```
+
+First run also downloads the RuneScape font (~200KB) to `renderer/fonts/`.
 
 ## Key Constants
 
@@ -91,3 +103,4 @@ pkill -f electron
 
 - `/test-rune-api` — smoke test all Flask API endpoints
 - `/test-rune-visual` — Playwright visual snapshot of the renderer UI
+- `/deploy` — stage all changes, commit, push, open PR, and merge in one shot
