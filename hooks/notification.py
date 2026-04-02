@@ -14,6 +14,14 @@ sys.path.insert(0, os.path.join(_plugin_root, "src"))
 import audio
 import config as cfg
 
+try:
+    from emojis import emoji as _emoji
+    def _e(shortcode, fallback=""):  # noqa: E301
+        return _emoji(shortcode)
+except Exception:
+    def _e(shortcode, fallback=""):  # noqa: E301
+        return fallback
+
 _COMPLETE_KEYWORDS = {"complete", "done", "finished", "success", "passed"}
 _ERROR_KEYWORDS = {"error", "failed", "blocked", "denied", "exception", "traceback"}
 
@@ -46,13 +54,13 @@ def main():
         if conf.get("sounds_enabled", True):
             audio.play_sound("level_up")
         if conf.get("theming_enabled", True):
-            print("\033[33m✨ [Game]: Quest complete! 🏆\033[0m", file=sys.stderr)
+            print(f"\033[33m{_e(':magic:', '✨')} [Game]: Quest complete! 🏆\033[0m", file=sys.stderr)
 
     elif kind == "error":
         if conf.get("sounds_enabled", True):
             audio.play_sound("inventory_full")
         if conf.get("theming_enabled", True):
-            print("\033[31m🎒 [Game]: Inventory full! Cannot proceed.\033[0m", file=sys.stderr)
+            print(f"\033[31m{_e(':inventory:', '🎒')} [Game]: Inventory full! Cannot proceed.\033[0m", file=sys.stderr)
 
     sys.exit(0)
 

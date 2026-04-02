@@ -5,6 +5,7 @@ Music tab has a functional player.
 """
 from textual.app import ComposeResult
 from textual.widget import Widget
+from textual.containers import Container, Horizontal, Vertical
 from textual.widgets import Button, Input, Static
 from textual.reactive import reactive
 from rich.text import Text
@@ -74,7 +75,6 @@ class MusicPanel(Widget):
         padding: 0;
     }
     #music-source-row {
-        layout: horizontal;
         height: 1;
         background: #18140c;
         padding: 0 1;
@@ -100,7 +100,6 @@ class MusicPanel(Widget):
         content-align: left middle;
     }
     #music-controls {
-        layout: horizontal;
         height: 2;
         background: #18140c;
         padding: 0 1;
@@ -141,7 +140,6 @@ class MusicPanel(Widget):
         background: #2a2316;
     }
     #custom-dir-row {
-        layout: horizontal;
         height: 1;
         background: #18140c;
         border-top: solid #605443;
@@ -169,7 +167,7 @@ class MusicPanel(Widget):
         self._source = config.get("music_source", "osrs")
         vol = config.get("music_volume", 80)
 
-        with Static(id="music-source-row"):
+        with Horizontal(id="music-source-row"):
             yield Button(
                 "OSRS Tracks",
                 classes="src-btn" + (" -active" if self._source == "osrs" else ""),
@@ -181,14 +179,14 @@ class MusicPanel(Widget):
                 id="src-custom",
             )
         yield Static("Now Playing: —", id="music-now-playing")
-        with Static(id="music-controls"):
+        with Horizontal(id="music-controls"):
             yield Button("◀◀", classes="ctrl-btn", id="music-prev")
             yield Button("▶", classes="ctrl-btn", id="music-play")
             yield Button("▶▶", classes="ctrl-btn", id="music-next")
             yield Button("■", classes="ctrl-btn", id="music-stop")
-            yield Static(f"  🔊 {vol}%", id="music-vol-label")
-        yield Static(id="music-track-list")
-        with Static(id="custom-dir-row"):
+            yield Static(f"  Vol: {vol}%", id="music-vol-label")
+        yield Container(id="music-track-list")
+        with Horizontal(id="custom-dir-row"):
             yield Static("Folder: ", id="custom-dir-label")
             dir_val = config.get("custom_music_dir", "")
             yield Input(value=dir_val, placeholder="path/to/music", id="custom-dir-input")
@@ -210,7 +208,7 @@ class MusicPanel(Widget):
         if not _MUSIC_OK or self._player is None:
             return
         try:
-            container = self.query_one("#music-track-list", Static)
+            container = self.query_one("#music-track-list", Container)
             container.remove_children()
             current = self._player.current_track
             for i, track in enumerate(self._player.track_list):
@@ -300,7 +298,6 @@ class ControlPanel(Widget):
         background: #2a2316;
     }
     .tab-row {
-        layout: horizontal;
         height: 7;
         background: #18140c;
     }
@@ -357,7 +354,7 @@ class ControlPanel(Widget):
         self.active_tab = tab
 
     def compose(self) -> ComposeResult:
-        with Static(classes="tab-row"):
+        with Horizontal(classes="tab-row"):
             for name, label in _TABS_ROW1:
                 active = label == self.active_tab
                 yield _TabButton(
@@ -365,7 +362,7 @@ class ControlPanel(Widget):
                     classes="tab-btn" + (" -active" if active else ""),
                     id=f"tab-{name}",
                 )
-        with Static(classes="tab-row"):
+        with Horizontal(classes="tab-row"):
             for name, label in _TABS_ROW2:
                 active = label == self.active_tab
                 yield _TabButton(
@@ -377,7 +374,7 @@ class ControlPanel(Widget):
 
     def _make_body(self) -> Widget:
         if self.active_tab == "Inventory":
-            return Static(id="panel-body", classes="inventory-grid")
+            return Container(id="panel-body", classes="inventory-grid")
         if self.active_tab == "Music":
             return MusicPanel(player=self._music_player, id="panel-body")
         return Static(

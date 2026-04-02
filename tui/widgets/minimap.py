@@ -4,6 +4,7 @@ The minimap area itself is a dark placeholder until map tile sprites are availab
 """
 from textual.app import ComposeResult
 from textual.widget import Widget
+from textual.containers import Container, Vertical
 from textual.widgets import Static
 from rich.text import Text
 
@@ -62,7 +63,6 @@ class Minimap(Widget):
     }
     #orb-column {
         width: 9;
-        layout: vertical;
         align: center top;
         padding: 0;
         background: #18140c;
@@ -78,9 +78,9 @@ class Minimap(Widget):
     """
 
     def compose(self) -> ComposeResult:
-        with Static(id="map-area"):
+        with Container(id="map-area"):
             yield Static("[ Map ]", id="map-label")
-        with Static(id="orb-column"):
+        with Vertical(id="orb-column"):
             for orb_name, value in _ORB_DEFS:
                 yield _OrbWidget(
                     orb_name, value,

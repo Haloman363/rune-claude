@@ -5,6 +5,7 @@ Authentic OSRS color coding per message type.
 from dataclasses import dataclass, field
 from textual.app import ComposeResult
 from textual.widget import Widget
+from textual.containers import Container, Horizontal
 from textual.widgets import Button, Input, Static
 from textual.reactive import reactive
 from rich.text import Text
@@ -44,7 +45,6 @@ class Chatbox(Widget):
         border: solid #605443;
     }
     .chat-tab-row {
-        layout: horizontal;
         height: 1;
         background: #18140c;
     }
@@ -74,7 +74,6 @@ class Chatbox(Widget):
     }
     #chat-input-bar {
         height: 1;
-        layout: horizontal;
         background: #18140c;
         padding: 0 1;
     }
@@ -122,7 +121,7 @@ class Chatbox(Widget):
         return rendered
 
     def compose(self) -> ComposeResult:
-        with Static(classes="chat-tab-row"):
+        with Horizontal(classes="chat-tab-row"):
             for tab in _CHAT_TABS:
                 active = tab == self.active_tab
                 btn = Button(
@@ -132,7 +131,7 @@ class Chatbox(Widget):
                 )
                 yield btn
         yield Static(self._build_initial_text(), id="chat-messages")
-        with Static(id="chat-input-bar"):
+        with Horizontal(id="chat-input-bar"):
             yield Static("Adventurer: ", id="chat-input-label")
             yield Input(placeholder="", id="chat-input")
 

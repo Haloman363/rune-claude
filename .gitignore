@@ -40,9 +40,22 @@ config.secret.*
 
 # Claude Code local settings (may contain permissions/tokens)
 .claude/settings.local.json
+.claude/
 
 # Claude plugin local state
 .claude-plugin/
+
+# Debug/scratch screenshots
+*.png
+
+# Playwright MCP state
+.playwright-mcp/
+
+# Stylelint local config
+.stylelintrc.json
+
+# User uploads (local only)
+User-Uploads/
 
 # Background shell state
 .bg-shell/
