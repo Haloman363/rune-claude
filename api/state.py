@@ -125,7 +125,7 @@ class AgentStateManager:
 
     def get_state(self) -> dict:
         self._ensure_main()
-        return {"agents": dict(self._agents), "tick": self._tick}
+        return {"agents": {k: dict(v) for k, v in self._agents.items()}, "tick": self._tick}
 
 
 _agent_state: AgentStateManager | None = None
