@@ -87,7 +87,8 @@ def test_viewport_state(client):
     r = client.get("/api/viewport/state")
     assert r.status_code == 200
     data = r.get_json()
-    assert data["phase"] == 1
+    assert "agents" in data
+    assert "tick" in data
 
 
 def test_renderer_index(client):

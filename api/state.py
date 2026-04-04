@@ -128,11 +128,8 @@ class AgentStateManager:
         return {"agents": {k: dict(v) for k, v in self._agents.items()}, "tick": self._tick}
 
 
-_agent_state: AgentStateManager | None = None
-
-
 def get_agent_state() -> AgentStateManager:
-    global _agent_state
-    if _agent_state is None:
-        _agent_state = AgentStateManager()
-    return _agent_state
+    from flask import current_app
+    if "agent_state" not in current_app.extensions:
+        current_app.extensions["agent_state"] = AgentStateManager()
+    return current_app.extensions["agent_state"]
