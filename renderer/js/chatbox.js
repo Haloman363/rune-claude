@@ -78,7 +78,15 @@ function initChatbox() {
   const maxBtn = document.getElementById('chat-maximize-btn')
   maxBtn.addEventListener('click', () => {
     const maximized = document.getElementById('chatbox').classList.toggle('maximized')
-    document.getElementById('viewport-placeholder').style.display = maximized ? 'none' : ''
+    const viewport = document.getElementById('game-viewport')
+    const placeholder = document.getElementById('viewport-placeholder')
+    if (maximized) {
+      viewport && viewport.classList.add('hidden')
+      placeholder && placeholder.classList.add('hidden')
+    } else {
+      viewport && viewport.classList.remove('hidden')
+      // placeholder stays hidden — initViewport() owns it
+    }
     maxBtn.textContent = maximized ? '\u2715' : '\u26F6'
   })
 

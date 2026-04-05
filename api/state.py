@@ -112,6 +112,8 @@ class AgentStateManager:
             self._agents[agent_id]["status"] = "idle"
             self._agents[agent_id]["current_tool"] = ""
             self._agents[agent_id]["xp"] += xp
+            # Snap position to where the agent arrived, then set new destination
+            self._agents[agent_id]["position"] = list(self._agents[agent_id]["destination"])
             self._agents[agent_id]["destination"] = list(_ZONE_TILES["town_square"])
 
         if tool == "Agent" and subagent_id and subagent_id in self._agents:
