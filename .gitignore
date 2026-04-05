@@ -91,6 +91,9 @@ yarn-error.log*
 # assets/sounds/*.mp3
 # assets/sounds/*.ogg
 
+# Tile sprites (generated, not stored in git — large binaries)
+assets/tiles/
+
 # Test artifacts
 *.log
 .pytest_cache/
