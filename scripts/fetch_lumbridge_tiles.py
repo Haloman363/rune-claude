@@ -43,9 +43,10 @@ COLS = 48
 ROWS = 31
 # row increases southward → gy decreases: gy = ORIGIN_GY - row
 
-# ── Output paths ──────────────────────────────────────────────────────────────
-OUT_DIR = Path("assets/tiles/lumbridge")
-MANIFEST_PATH = Path("assets/tiles/lumbridge.json")
+# ── Output paths (anchored to project root, safe regardless of cwd) ──────────
+_PROJECT_ROOT = Path(__file__).parent.parent
+OUT_DIR = _PROJECT_ROOT / "assets/tiles/lumbridge"
+MANIFEST_PATH = _PROJECT_ROOT / "assets/tiles/lumbridge.json"
 RATE_LIMIT_S = 0.1
 FALLBACK_COLOR = (20, 15, 10, 255)  # near-black RGBA for missing/water tiles
 

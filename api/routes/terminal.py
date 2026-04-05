@@ -73,9 +73,17 @@ def _reader():
 threading.Thread(target=_reader, daemon=True).start()
 
 
+_ALLOWED_ORIGINS = {"http://localhost:7432", "file://", "null"}
+
+
 @sock.route("/ws/terminal", bp=bp)
 def terminal_ws(ws):
+    from flask import request as flask_request
     from simple_websocket import ConnectionClosed as WsClosed
+    origin = flask_request.headers.get("Origin", "null")
+    if origin not in _ALLOWED_ORIGINS:
+        ws.close(message=b"forbidden")
+        return
     my_q: queue.Queue[str] = queue.Queue()
     with _subscribers_lock:
         _subscribers.append(my_q)

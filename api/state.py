@@ -71,10 +71,15 @@ class AgentStateManager:
         self._subagent_color_idx += 1
         return color
 
+    _MAX_AGENTS = 20
+
     def handle_pre_tool(self, agent_id: str, tool: str, subagent_id: str | None = None):
         self._ensure_main()
         zone = _TOOL_ZONES.get(tool, "town_square")
         dest = list(_ZONE_TILES[zone])
+
+        if agent_id not in self._agents and len(self._agents) >= self._MAX_AGENTS:
+            return  # ignore unknown agents beyond the cap
 
         if agent_id not in self._agents:
             self._agents[agent_id] = {
@@ -91,7 +96,7 @@ class AgentStateManager:
         self._agents[agent_id]["current_tool"] = tool
         self._agents[agent_id]["destination"] = dest
 
-        if tool == "Agent" and subagent_id:
+        if tool == "Agent" and subagent_id and len(self._agents) < self._MAX_AGENTS:
             self._agents[subagent_id] = {
                 "name": subagent_id[:8],
                 "status": "working",

@@ -54,10 +54,8 @@ async function pollState() {
     const r = await fetch('/api/viewport/state')
     if (!r.ok) return
     const data = await r.json()
-    if (data.tick !== lastTick) {
-      worldState = data
-      lastTick = data.tick
-    }
+    worldState = data
+    lastTick = data.tick
   } catch (_) { /* Flask not running */ }
 }
 
@@ -230,6 +228,8 @@ async function loadTileAtlas() {
   }
 
   const { rows, cols } = manifest
+  const total = rows * cols
+  let loaded = 0
   const images = []
 
   for (let row = 0; row < rows; row++) {
@@ -237,8 +237,8 @@ async function loadTileAtlas() {
       const key = `${row}_${col}`
       const img = new Image()
       const p = new Promise((resolve) => {
-        img.onload = resolve
-        img.onerror = resolve  // Missing tile — resolve anyway, img stays broken
+        img.onload = () => { loaded++; resolve() }
+        img.onerror = resolve  // count as missing, resolve anyway
       })
       img.src = `/assets/tiles/lumbridge/${key}.png`
       tileAtlas[key] = img
@@ -247,8 +247,12 @@ async function loadTileAtlas() {
   }
 
   await Promise.all(images)
-  tileAtlasReady = true
-  console.log(`Tile atlas loaded: ${rows * cols} tiles`)
+  if (loaded >= total * 0.5) {
+    tileAtlasReady = true
+    console.log(`Tile atlas loaded: ${loaded}/${total} tiles`)
+  } else {
+    console.warn(`Tile atlas incomplete (${loaded}/${total}), using fallback`)
+  }
 }
 
 // ─── Init (called from main.js) ───────────────────────────────────────────────

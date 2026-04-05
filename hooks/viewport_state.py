@@ -43,7 +43,7 @@ def main():
     if tool_name.lower() == "agent":
         subagent_id = tool_input.get("session_id") or tool_input.get("subagent_id")
         if not subagent_id:
-            subagent_id = f"sub-{session_id[:8]}"
+            subagent_id = f"sub-{session_id[:8]}-{os.urandom(3).hex()}"
 
     if hook_event == "PreToolUse":
         _post({
