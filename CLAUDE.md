@@ -15,7 +15,8 @@ dev.py → starts Flask (port 7432) + Electron window
     ├── routes/config.py  ←→  js/api.js (fetch wrapper)
     ├── routes/audio.py   ←→  js/main.js (login SFX)
     ├── routes/music.py   ←→  js/music.js (player UI)
-    └── routes/viewport.py    js/viewport.js (Phase 2 stub)
+    ├── routes/viewport.py ←→ js/viewport.js (agent canvas renderer)
+    └── state.py              AgentStateManager singleton (per-app, via current_app.extensions)
           ↓
     tui/ (Python library — keep, don't rewrite)
     ├── config.py   — load_config(), set_value()
@@ -75,12 +76,15 @@ pkill -f electron
 - **New UI panel**: add JS in `renderer/js/panel.js` `setPanel()` switch, add CSS in `renderer/style/osrs.css`
 - **New assets**: drop in `assets/icons/` or `assets/sounds/` — Flask serves them at `/assets/*`
 - **Phase 2 (combat sim)**: wire into `renderer/js/viewport.js` + `api/routes/viewport.py`
+- **Tile assets**: `assets/tiles/` is gitignored. Run `.venv/bin/python scripts/fetch_lumbridge_tiles.py` to regenerate Lumbridge tiles (~2 HTTP requests, produces 1488 PNGs).
+- **AgentStateManager**: accessed via `get_agent_state()` in `api/state.py`, stored in `current_app.extensions["agent_state"]` for per-Flask-app isolation (not a module global).
 
 ## Files That Should Not Be Modified Without Care
 
 - `tui/config.py`, `tui/audio.py`, `tui/music.py`, `tui/platform_utils.py` — imported by Flask API, no Textual deps
 - `tui/data/osrs_tracks.json` — 105 OSRS track manifest consumed by MusicPlayer
 - `assets/` — real OSRS game sprites, do not regenerate or substitute with placeholders. Always use real game assets. Search the wiki, RuneLite repo, or 2009scape cache first. Only ask the user if a specific asset cannot be found after searching.
+- `api/routes/terminal.py` — bash PTY over WebSocket, intentionally localhost-only. Origin check enforced in `terminal_ws()`. Do not remove the origin check.
 
 ## General Rules
 
@@ -94,6 +98,7 @@ pkill -f electron
 ## Verification
 
 - Use the Playwright MCP to visually verify UI changes after making them. Take a screenshot to confirm the fix looks correct before reporting completion.
+- **Playwright screenshots**: must save within the project directory (MCP restriction) — use a relative path like `rune-screenshot.png`, not `/tmp/`.
 
 ## Project Setup
 
