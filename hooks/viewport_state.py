@@ -35,12 +35,12 @@ def main():
 
     hook_event = os.environ.get("CLAUDE_HOOK_EVENT", "")
     tool_name = event.get("tool_name", event.get("tool", ""))
-    session_id = os.environ.get("CLAUDE_SESSION_ID", "unknown")
+    session_id = event.get("session_id") or os.environ.get("CLAUDE_SESSION_ID", "unknown")
 
     # Detect subagent spawning: Agent tool with a session_id in tool_input
     subagent_id = None
     tool_input = event.get("tool_input", {})
-    if tool_name == "Agent":
+    if tool_name.lower() == "agent":
         subagent_id = tool_input.get("session_id") or tool_input.get("subagent_id")
         if not subagent_id:
             subagent_id = f"sub-{session_id[:8]}"
