@@ -79,7 +79,7 @@ html, body {
 }
 
 /* ── Utility ──────────────────────────────────── */
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 /* ── Scrollbar styling ────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }

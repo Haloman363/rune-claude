@@ -22,6 +22,15 @@ const ZONE_RECTS = {
   town_square: [20,  12, 27, 18],
 }
 
+// Zone label positions in pixels — static, hoisted to avoid per-frame allocation
+const ZONE_LABEL_POS = {
+  scriptorium: [11 * TILE, 7 * TILE],
+  forge:       [11 * TILE, 23 * TILE],
+  library:     [36 * TILE, 7 * TILE],
+  guild:       [36 * TILE, 23 * TILE],
+  town_square: [24 * TILE, 14 * TILE],
+}
+
 // ─── State ────────────────────────────────────────────────────────────────────
 let worldState = { agents: {}, tick: -1 }
 let lastTick = -1
@@ -82,13 +91,6 @@ function drawWorld(ctx) {
   ctx.fillStyle = 'rgba(192,168,134,0.25)'
   ctx.font = '9px "RuneScape UF", monospace'
   ctx.textAlign = 'center'
-  const ZONE_LABEL_POS = {
-    scriptorium: [11 * TILE, 7 * TILE],
-    forge:       [11 * TILE, 23 * TILE],
-    library:     [36 * TILE, 7 * TILE],
-    guild:       [36 * TILE, 23 * TILE],
-    town_square: [24 * TILE, 14 * TILE],
-  }
   for (const [zone, [lx, ly]] of Object.entries(ZONE_LABEL_POS)) {
     ctx.fillText(zone.replace('_', ' '), lx, ly)
   }
@@ -191,6 +193,7 @@ function drawAgent(ctx, agent, px, py) {
 function initViewport() {
   const placeholder = document.getElementById('viewport-placeholder')
   const canvas = document.getElementById('game-viewport')
+  if (!canvas) { console.error('game-viewport canvas not found'); return }
 
   canvas.width = COLS * TILE   // 768
   canvas.height = ROWS * TILE  // 496
