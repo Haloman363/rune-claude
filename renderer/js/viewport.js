@@ -39,6 +39,10 @@ let lastTick = -1
 // agentRender[id] = { x, y } in pixel coords (top-left of sprite)
 const agentRender = {}
 
+// ─── Tile atlas ───────────────────────────────────────────────────────────────
+let tileAtlas = {}         // keyed by "row_col" → HTMLImageElement
+let tileAtlasReady = false
+
 // ─── Tile → pixel helpers ────────────────────────────────────────────────────
 function tileToPixel(col, row) {
   return { x: col * TILE, y: row * TILE }
@@ -75,8 +79,8 @@ function renderLoop(canvas) {
   requestAnimationFrame(frame)
 }
 
-// ─── Draw tile grid + zones ───────────────────────────────────────────────────
-function drawWorld(ctx) {
+// ─── Zone color fallback (used when tile atlas not loaded) ────────────────────
+function drawZoneColors(ctx) {
   // Base fill
   ctx.fillStyle = '#1a2a0a'
   ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE)
@@ -103,6 +107,31 @@ function drawWorld(ctx) {
   }
   for (let r = 0; r <= ROWS; r++) {
     ctx.beginPath(); ctx.moveTo(0, r * TILE); ctx.lineTo(COLS * TILE, r * TILE); ctx.stroke()
+  }
+}
+
+// ─── Real tile map (when atlas is loaded) ─────────────────────────────────────
+function drawTileMap(ctx) {
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
+      const img = tileAtlas[`${row}_${col}`]
+      if (img) {
+        ctx.drawImage(img, col * TILE, row * TILE, TILE, TILE)
+      } else {
+        // Individual tile missing — fill with dark fallback
+        ctx.fillStyle = '#18140c'
+        ctx.fillRect(col * TILE, row * TILE, TILE, TILE)
+      }
+    }
+  }
+}
+
+// ─── Draw tile grid + zones ───────────────────────────────────────────────────
+function drawWorld(ctx) {
+  if (tileAtlasReady) {
+    drawTileMap(ctx)
+  } else {
+    drawZoneColors(ctx)
   }
 }
 
@@ -189,6 +218,39 @@ function drawAgent(ctx, agent, px, py) {
   }
 }
 
+// ─── Tile atlas loader ────────────────────────────────────────────────────────
+async function loadTileAtlas() {
+  let manifest
+  try {
+    const r = await fetch('/assets/tiles/lumbridge.json')
+    if (!r.ok) return  // No tiles fetched yet — stay in fallback mode
+    manifest = await r.json()
+  } catch (_) {
+    return  // Network error — stay in fallback mode
+  }
+
+  const { rows, cols } = manifest
+  const images = []
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const key = `${row}_${col}`
+      const img = new Image()
+      const p = new Promise((resolve) => {
+        img.onload = resolve
+        img.onerror = resolve  // Missing tile — resolve anyway, img stays broken
+      })
+      img.src = `/assets/tiles/lumbridge/${key}.png`
+      tileAtlas[key] = img
+      images.push(p)
+    }
+  }
+
+  await Promise.all(images)
+  tileAtlasReady = true
+  console.log(`Tile atlas loaded: ${rows * cols} tiles`)
+}
+
 // ─── Init (called from main.js) ───────────────────────────────────────────────
 function initViewport() {
   const placeholder = document.getElementById('viewport-placeholder')
@@ -205,4 +267,5 @@ function initViewport() {
   pollState()
   setInterval(pollState, POLL_MS)
   renderLoop(canvas)
+  loadTileAtlas()
 }
