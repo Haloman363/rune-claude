@@ -73,7 +73,12 @@ def _reader():
 threading.Thread(target=_reader, daemon=True).start()
 
 
-_ALLOWED_ORIGINS = {"http://localhost:7432", "file://", "null"}
+_ALLOWED_ORIGINS = {
+    "http://localhost:7432",
+    "http://127.0.0.1:7432",  # Electron sends this on some load paths
+    "file://",
+    "null",
+}
 
 
 @sock.route("/ws/terminal", bp=bp)

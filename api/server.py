@@ -38,6 +38,10 @@ def create_app() -> Flask:
     def renderer_fonts(filename):
         return send_from_directory(RENDERER_DIR / "fonts", filename)
 
+    @app.route("/vendor/<path:filename>")
+    def renderer_vendor(filename):
+        return send_from_directory(RENDERER_DIR / "vendor", filename)
+
     from api.routes.terminal import bp as terminal_bp, init_sock
     app.register_blueprint(terminal_bp)
     init_sock(app)

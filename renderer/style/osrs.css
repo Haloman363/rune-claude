@@ -12,11 +12,14 @@
   --c-system:   #c0a886;
 
   /* OSRS Fixed Mode — 1.5× scaled (1× base: 765×503, sidebar 249px) */
-  --app-w: 1148px;
-  --app-h: 755px;
+  --app-w: 1142px;
+  --app-h: 744px;
   --sidebar-w: 374px;
-  --viewport-w: 774px;
-  --viewport-h: 507px;
+
+  /* Must match the canvas backing store (COLS*TILE x ROWS*TILE in viewport.js),
+     otherwise the tile art is non-uniformly stretched and goes blurry. */
+  --viewport-w: 768px;
+  --viewport-h: 496px;
   --chatbox-h:  248px;
   --chat-font-size: 20px;
   --control-font-size: 20px;

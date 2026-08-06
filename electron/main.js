@@ -23,8 +23,8 @@ function waitForApi(attempts, callback) {
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1148,
-    height: 780,  // 755px content + ~25px title bar
+    width: 1142,
+    height: 769,  // 744px content + ~25px title bar
     resizable: false,
     title: 'rune-claude',
     backgroundColor: '#18140c',
