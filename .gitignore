@@ -108,3 +108,6 @@ assets/scene/
 
 # Superpowers session scratch
 .superpowers/
+
+# Claude Code local worktrees
+.claude/worktrees/
