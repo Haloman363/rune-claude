@@ -102,3 +102,12 @@ htmlcov/
 
 # Git worktrees
 .worktrees/
+
+# Exported OSRS scene geometry (regenerate with OSRS-Environment-Exporter)
+assets/scene/
+
+# Superpowers session scratch
+.superpowers/
+
+# Claude Code local worktrees
+.claude/worktrees/

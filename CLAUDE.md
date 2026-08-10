@@ -50,18 +50,10 @@ First run also downloads the RuneScape font (~200KB) to `renderer/fonts/`.
 
 ## Testing
 
-```bash
-# Python unit tests (TUI widgets)
-.venv/bin/python -m pytest tests/ -v
+Run `/test-rune-api` — it handles server startup, pytest (needs `PYTHONPATH=.`),
+endpoint smoke tests, and cleanup. `/test-rune-visual` for UI snapshots.
 
-# Flask API smoke test (server must be running)
-curl http://localhost:7432/api/config
-curl http://localhost:7432/api/music/tracks | python3 -m json.tool | head -10
-
-# Kill lingering processes
-fuser -k 7432/tcp
-pkill -f electron
-```
+Lingering processes: `fuser -k 7432/tcp` and `pkill -f electron`.
 
 ## WSL2 Gotchas
 
@@ -86,23 +78,13 @@ pkill -f electron
 - `assets/` — real OSRS game sprites, do not regenerate or substitute with placeholders. Always use real game assets. Search the wiki, RuneLite repo, or 2009scape cache first. Only ask the user if a specific asset cannot be found after searching.
 - `api/routes/terminal.py` — bash PTY over WebSocket, intentionally localhost-only. Origin check enforced in `terminal_ws()`. Do not remove the origin check.
 
-## General Rules
-
-- When asked for a simple change, do the minimal fix first. Don't over-engineer or rewrite surrounding code. If the first attempt doesn't work, diagnose the root cause before trying another approach — don't cycle through random fixes.
-- When asked a conceptual question or for a plan, don't start exploring the codebase or making changes. Answer the question first, then ask if implementation is wanted.
-
 ## CSS / UI
 
-- When working with CSS layout issues, check for baked-in image artifacts (padding, borders, backgrounds in the image file itself) before adjusting CSS properties. Prefer simple solutions over precise pixel positioning.
+- Sprites here often have baked-in artifacts (padding, borders, backgrounds in the image file itself) — check the asset before adjusting CSS to compensate.
 
 ## Verification
 
-- Use the Playwright MCP to visually verify UI changes after making them. Take a screenshot to confirm the fix looks correct before reporting completion.
 - **Playwright screenshots**: must save within the project directory (MCP restriction) — use a relative path like `rune-screenshot.png`, not `/tmp/`.
-
-## Project Setup
-
-- This project uses CSS, HTML, JavaScript, Python. When editing config files (settings.json, MCP configs), check the correct schema and scope (user vs local) before writing.
 
 ## Skills Available
 

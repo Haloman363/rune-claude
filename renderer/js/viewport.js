@@ -40,7 +40,10 @@ let lastTick = -1
 const agentRender = {}
 
 // ─── Tile atlas ───────────────────────────────────────────────────────────────
-let tileAtlas = {}         // keyed by "row_col" → HTMLImageElement
+// One stitched PNG, not 1488 tiles: the per-tile fetch exhausted the browser
+// connection pool and wedged the Flask dev server. Build with
+// scripts/build_tile_atlas.py.
+let tileAtlas = null       // HTMLImageElement — full map, cols*TILE x rows*TILE
 let tileAtlasReady = false
 
 // ─── Tile → pixel helpers ────────────────────────────────────────────────────
@@ -110,18 +113,10 @@ function drawZoneColors(ctx) {
 
 // ─── Real tile map (when atlas is loaded) ─────────────────────────────────────
 function drawTileMap(ctx) {
-  for (let row = 0; row < ROWS; row++) {
-    for (let col = 0; col < COLS; col++) {
-      const img = tileAtlas[`${row}_${col}`]
-      if (img) {
-        ctx.drawImage(img, col * TILE, row * TILE, TILE, TILE)
-      } else {
-        // Individual tile missing — fill with dark fallback
-        ctx.fillStyle = '#18140c'
-        ctx.fillRect(col * TILE, row * TILE, TILE, TILE)
-      }
-    }
-  }
+  // Atlas is pre-stitched at exactly COLS*TILE x ROWS*TILE — one blit.
+  ctx.fillStyle = '#18140c'
+  ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE)
+  ctx.drawImage(tileAtlas, 0, 0)
 }
 
 // ─── Draw tile grid + zones ───────────────────────────────────────────────────
@@ -218,41 +213,21 @@ function drawAgent(ctx, agent, px, py) {
 
 // ─── Tile atlas loader ────────────────────────────────────────────────────────
 async function loadTileAtlas() {
-  let manifest
-  try {
-    const r = await fetch('/assets/tiles/lumbridge.json')
-    if (!r.ok) return  // No tiles fetched yet — stay in fallback mode
-    manifest = await r.json()
-  } catch (_) {
-    return  // Network error — stay in fallback mode
+  const img = new Image()
+  const ok = await new Promise((resolve) => {
+    img.onload = () => resolve(true)
+    img.onerror = () => resolve(false)
+    img.src = '/assets/tiles/lumbridge.png'
+  })
+
+  if (!ok) {
+    console.warn('Tile atlas missing — run scripts/build_tile_atlas.py; using fallback')
+    return
   }
 
-  const { rows, cols } = manifest
-  const total = rows * cols
-  let loaded = 0
-  const images = []
-
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const key = `${row}_${col}`
-      const img = new Image()
-      const p = new Promise((resolve) => {
-        img.onload = () => { loaded++; resolve() }
-        img.onerror = resolve  // count as missing, resolve anyway
-      })
-      img.src = `/assets/tiles/lumbridge/${key}.png`
-      tileAtlas[key] = img
-      images.push(p)
-    }
-  }
-
-  await Promise.all(images)
-  if (loaded >= total * 0.5) {
-    tileAtlasReady = true
-    console.log(`Tile atlas loaded: ${loaded}/${total} tiles`)
-  } else {
-    console.warn(`Tile atlas incomplete (${loaded}/${total}), using fallback`)
-  }
+  tileAtlas = img
+  tileAtlasReady = true
+  console.log(`Tile atlas loaded: ${img.naturalWidth}x${img.naturalHeight}`)
 }
 
 // ─── Init (called from main.js) ───────────────────────────────────────────────
@@ -267,9 +242,15 @@ function initViewport() {
   if (placeholder) placeholder.classList.add('hidden')
   canvas.classList.remove('hidden')
 
+  // The 3D renderer claims the canvas when it loads; skip the 2D loop then.
+  if (window.RUNE_VIEWPORT_3D) return
+
   // Start polling and render loop
   pollState()
   setInterval(pollState, POLL_MS)
   renderLoop(canvas)
   loadTileAtlas()
 }
+
+// Exposed so viewport3d-boot.js can fall back to the 2D renderer.
+window.initViewport = initViewport
