@@ -97,12 +97,24 @@ def test_renderer_index(client):
     assert b"rune-claude" in r.data
 
 
+# assets/icons is gitignored (global *.png rule), so a clean checkout has no
+# sprites to serve. Skip rather than fail there, but still assert wherever the
+# assets are present — that is where a broken static route would show up.
+ASSETS = Path(__file__).parent.parent.parent / "assets"
+requires_icons = pytest.mark.skipif(
+    not (ASSETS / "icons/ui/tabs/tab_combat.png").exists(),
+    reason="assets/icons not present (gitignored); run scripts/download_icons.py",
+)
+
+
+@requires_icons
 def test_asset_tab_icon(client):
     r = client.get("/assets/icons/ui/tabs/tab_combat.png")
     assert r.status_code == 200
     assert r.content_type.startswith("image/")
 
 
+@requires_icons
 def test_asset_orb(client):
     r = client.get("/assets/icons/ui/orbs/orb_hp.png")
     assert r.status_code == 200

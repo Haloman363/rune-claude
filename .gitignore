@@ -50,9 +50,6 @@ config.secret.*
 # Playwright MCP state
 .playwright-mcp/
 
-# Stylelint local config
-.stylelintrc.json
-
 # User uploads (local only)
 User-Uploads/
 
