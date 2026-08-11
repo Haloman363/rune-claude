@@ -4,14 +4,63 @@
   "description": "OSRS-themed desktop app",
   "main": "electron/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build:backend": "node scripts/build-backend.js",
+    "dist": "npm run build:backend && electron-builder",
+    "dist:win": "npm run build:backend && electron-builder --win",
+    "dist:mac": "npm run build:backend && electron-builder --mac",
+    "dist:linux": "npm run build:backend && electron-builder --linux",
+    "dist:dir": "npm run build:backend && electron-builder --dir"
   },
   "devDependencies": {
     "electron": "^41.0.0",
+    "electron-builder": "^25.1.8",
     "stylelint": "^17.6.0",
     "stylelint-config-standard": "^40.0.0"
   },
   "dependencies": {
     "three": "^0.185.1"
+  },
+  "build": {
+    "appId": "com.jaymesbunce.rune-claude",
+    "productName": "rune-claude",
+    "directories": {
+      "output": "release",
+      "buildResources": "packaging"
+    },
+    "files": [
+      "electron/**/*",
+      "package.json",
+      "!node_modules/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "backend-dist",
+        "to": "backend",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": ["nsis", "zip"],
+      "icon": "packaging/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "${productName}-${version}-setup.${ext}"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "icon": "packaging/icon.png",
+      "category": "public.app-category.developer-tools",
+      "hardenedRuntime": true,
+      "entitlements": "packaging/entitlements.mac.plist",
+      "entitlementsInherit": "packaging/entitlements.mac.plist"
+    },
+    "linux": {
+      "target": ["AppImage", "tar.gz"],
+      "icon": "packaging/icon.png",
+      "category": "Development"
+    }
   }
 }

@@ -1,14 +1,24 @@
-"""Persistent bash PTY WebSocket endpoint."""
-import fcntl
+"""Persistent bash PTY WebSocket endpoint.
+
+Unix-only. Windows has no fcntl/openpty and no /bin/bash, so the PTY is spawned
+behind a platform guard — importing this module must never take the whole
+backend down on a platform that can't host it. See _PTY_SUPPORTED.
+"""
 import os
 import queue
 import re
-import select
 import subprocess
 import threading
 
 from flask import Blueprint
 from flask_sock import Sock
+
+try:
+    import fcntl
+    import select
+    _PTY_SUPPORTED = hasattr(os, "openpty")
+except ImportError:  # Windows
+    _PTY_SUPPORTED = False
 
 sock = Sock()
 bp = Blueprint("terminal", __name__)
@@ -18,20 +28,29 @@ def init_sock(app):
     sock.init_app(app)
 
 
-# PTY singleton — spawned once at import time
-_master_fd, _slave_fd = os.openpty()
-os.set_inheritable(_slave_fd, True)
-_pty_proc = subprocess.Popen(
-    ["/bin/bash", "--login"],
-    stdin=_slave_fd,
-    stdout=_slave_fd,
-    stderr=_slave_fd,
-    close_fds=True,
-    start_new_session=True,
-)
-os.close(_slave_fd)
-_flags = fcntl.fcntl(_master_fd, fcntl.F_GETFL)
-fcntl.fcntl(_master_fd, fcntl.F_SETFL, _flags | os.O_NONBLOCK)
+# PTY singleton — spawned once at import time, Unix only.
+_master_fd = None
+_pty_proc = None
+if _PTY_SUPPORTED:
+    try:
+        _master_fd, _slave_fd = os.openpty()
+        os.set_inheritable(_slave_fd, True)
+        _pty_proc = subprocess.Popen(
+            ["/bin/bash", "--login"],
+            stdin=_slave_fd,
+            stdout=_slave_fd,
+            stderr=_slave_fd,
+            close_fds=True,
+            start_new_session=True,
+        )
+        os.close(_slave_fd)
+        _flags = fcntl.fcntl(_master_fd, fcntl.F_GETFL)
+        fcntl.fcntl(_master_fd, fcntl.F_SETFL, _flags | os.O_NONBLOCK)
+    except (OSError, FileNotFoundError):
+        # No bash, or PTYs unavailable (some containers). Endpoint degrades to
+        # a clean refusal rather than killing the server at import.
+        _PTY_SUPPORTED = False
+        _master_fd = None
 
 _ANSI = re.compile(r'\x1b(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
 _OSC  = re.compile(r'\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)')
@@ -70,7 +89,8 @@ def _reader():
                 _broadcast(line)
 
 
-threading.Thread(target=_reader, daemon=True).start()
+if _PTY_SUPPORTED:
+    threading.Thread(target=_reader, daemon=True).start()
 
 
 _ALLOWED_ORIGINS = {
@@ -88,6 +108,12 @@ def terminal_ws(ws):
     origin = flask_request.headers.get("Origin", "null")
     if origin not in _ALLOWED_ORIGINS:
         ws.close(message=b"forbidden")
+        return
+    if not _PTY_SUPPORTED:
+        # Windows: no PTY. Tell the client explicitly instead of dropping the
+        # socket, which the renderer would report as an abnormal 1006 close.
+        ws.send("[terminal] not supported on this platform")
+        ws.close(message=b"unsupported")
         return
     my_q: queue.Queue[str] = queue.Queue()
     with _subscribers_lock:

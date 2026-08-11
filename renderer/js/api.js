@@ -1,5 +1,7 @@
-const API = (window.RUNE && window.RUNE.apiBase) || 'http://localhost:7432/api'
-const ASSETS = (window.RUNE && window.RUNE.assetsBase) || 'http://localhost:7432/assets'
+// Relative by default — the page is served by Flask, so same-origin requests
+// work whether the window loaded 127.0.0.1 or localhost, and survive a port change.
+const API = (window.RUNE && window.RUNE.apiBase) || '/api'
+const ASSETS = (window.RUNE && window.RUNE.assetsBase) || '/assets'
 
 async function apiGet(path) {
   const r = await fetch(API + path)

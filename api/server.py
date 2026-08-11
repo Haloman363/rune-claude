@@ -1,16 +1,31 @@
 """Flask app factory for the rune-claude API server."""
+import sys
 from pathlib import Path
 from flask import Flask, send_file, send_from_directory
 from flask_cors import CORS
 
-ROOT = Path(__file__).parent.parent
+# PyInstaller unpacks bundled data to _MEIPASS; __file__ points inside the
+# archive there, so asset paths must come from the bundle root instead.
+if getattr(sys, "frozen", False):
+    ROOT = Path(sys._MEIPASS)
+else:
+    ROOT = Path(__file__).parent.parent
 ASSETS_DIR = ROOT / "assets"
 RENDERER_DIR = ROOT / "renderer"
 
 
 def create_app() -> Flask:
+    from api.scene import ensure_scene
+    ensure_scene()
+
     app = Flask(__name__, static_folder=str(ASSETS_DIR), static_url_path="/assets")
-    CORS(app, origins=["http://localhost:7432", "file://"])
+    # 127.0.0.1 and localhost are distinct origins to the browser; Electron
+    # loads one and the renderer may fetch the other.
+    CORS(app, origins=[
+        "http://localhost:7432",
+        "http://127.0.0.1:7432",
+        "file://",
+    ])
 
     from api.routes.config import bp as config_bp
     from api.routes.audio import bp as audio_bp

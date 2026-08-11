@@ -11,7 +11,10 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 VENV="$DIR/.venv"
 if [[ ! -d "$VENV" ]]; then
   echo "Creating Python virtual environment..."
-  python3 -m venv "$VENV"
+  python3 -m venv "$VENV" || {
+    echo "venv creation failed. Run ./scripts/setup-dev.sh to diagnose." >&2
+    exit 1
+  }
 fi
 
 # Install/update dependencies

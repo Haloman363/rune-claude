@@ -78,6 +78,13 @@ def ensure_font() -> None:
             print("The app will use the WOFF2 font or fallback monospace.")
 
 
+def ensure_scene() -> None:
+    """Unpack the 3D scene buffer. Shared with the packaged backend."""
+    sys.path.insert(0, str(ROOT))
+    from api.scene import ensure_scene as _ensure
+    _ensure()
+
+
 def wait_for_api(port: int, attempts: int = 40) -> bool:
     url = f"http://localhost:{port}/api/config"
     for _ in range(attempts):
@@ -96,6 +103,7 @@ if __name__ == "__main__":
     if not server_only:
         ensure_node_deps()
     ensure_font()
+    ensure_scene()
 
     env = os.environ.copy()
     env["PYTHONPATH"] = str(ROOT) + os.pathsep + env.get("PYTHONPATH", "")
