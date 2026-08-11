@@ -1,0 +1,54 @@
+name: Tests
+
+# Runs on every push/PR. build.yml only fires on packaging paths, so without
+# this most changes would land with no CI at all.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run tests
+        run: python -m pytest tests/ -q
+        env:
+          PYTHONPATH: .
+
+      # Guards the Windows regression that used to kill the backend at import:
+      # terminal.py spawns a PTY, which does not exist there.
+      - name: Import the Flask app
+        run: python -c "from api.server import create_app; create_app(); print('app imports OK')"
+        env:
+          PYTHONPATH: .
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx stylelint "renderer/style/**/*.css"
+      - name: Check electron/main.js parses
+        run: node --check electron/main.js

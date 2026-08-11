@@ -1,2 +1,5 @@
 pytest>=7.0
 pytest-cov>=4.0
+# tui/ (the Textual TUI) is not imported by the Flask backend, but tests/tui
+# needs it — without this a fresh clone cannot collect the full suite.
+textual>=0.40

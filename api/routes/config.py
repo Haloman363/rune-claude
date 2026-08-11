@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from tui.config import load_config, set_value
+from tui.config import load_config
 
 bp = Blueprint("config", __name__)
 

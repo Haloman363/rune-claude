@@ -50,9 +50,6 @@ config.secret.*
 # Playwright MCP state
 .playwright-mcp/
 
-# Stylelint local config
-.stylelintrc.json
-
 # User uploads (local only)
 User-Uploads/
 
@@ -103,8 +100,17 @@ htmlcov/
 # Git worktrees
 .worktrees/
 
-# Exported OSRS scene geometry (regenerate with OSRS-Environment-Exporter)
-assets/scene/
+# Exported OSRS scene geometry. Committed so the 3D viewport works on a plain
+# clone. data.bin is stored gzipped (26MB -> 2.7MB); dev.sh unpacks it.
+assets/scene/data.bin
+!assets/scene/data.bin.gz
+!assets/scene/Textures/*.png
+
+# Build output
+release/
+backend-dist/
+build/
+!packaging/icon.png
 
 # Superpowers session scratch
 .superpowers/
